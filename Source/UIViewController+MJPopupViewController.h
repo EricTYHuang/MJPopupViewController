@@ -22,13 +22,34 @@ typedef enum {
     MJPopupViewAnimationSlideRightRight,
 } MJPopupViewAnimation;
 
+typedef enum {
+    NYPopupViewVerticalCenter,
+    NYPopupViewVerticalTop,
+    NYPopupViewVerticalBottom,
+    NYPopupViewVerticalCustom,
+} NYPopupViewVerticalPosition;
+
+typedef enum {
+    NYPopupViewHorizontalCenter,
+    NYPopupViewHorizontalLeft,
+    NYPopupViewHorizontalRight,
+    NYPopupViewHorizontalCustom,
+} NYPopupViewHorizontalPosition;
+
 @interface UIViewController (MJPopupViewController)
 
 @property (nonatomic, retain) UIViewController *mj_popupViewController;
 @property (nonatomic, retain) MJPopupBackgroundView *mj_popupBackgroundView;
 
-- (void)presentPopupViewController:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType;
-- (void)presentPopupViewController:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType dismissed:(void(^)(void))dismissed;
+- (void)presentPopupViewController: (UIViewController*)popupViewController animationType: (MJPopupViewAnimation)animationType;
+- (void)presentPopupViewController: (UIViewController*)popupViewController animationType: (MJPopupViewAnimation)animationType dismissed:(void(^)(void))dismissed;
+
+- (void)presentPopupViewController: (UIViewController*)popupViewController
+                     animationType: (MJPopupViewAnimation)animationType
+                  verticalPosition: (NYPopupViewVerticalPosition)vertical
+                horizontalPosition: (NYPopupViewHorizontalPosition)horizontal
+                    customPosition: (CGPoint)customPosition;
+
 - (void)dismissPopupViewControllerWithanimationType:(MJPopupViewAnimation)animationType;
 
 @end

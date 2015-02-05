@@ -19,6 +19,11 @@
 #define kMJOverlayViewTag 23945
 
 @interface UIViewController (MJPopupViewControllerPrivate)
+
+@property (nonatomic, assign)NYPopupViewVerticalPosition popupVertical;
+@property (nonatomic, assign)NYPopupViewHorizontalPosition popupHorizontal;
+@property (nonatomic, assign)CGPoint popupViewPosition;
+
 - (UIView*)topView;
 - (void)presentPopupView:(UIView*)popupView;
 @end
@@ -51,6 +56,30 @@ static void * const keypath = (void*)&keypath;
     
 }
 
+- (NYPopupViewVerticalPosition)popupVertical {
+    return [objc_getAssociatedObject(self, @selector(vertical)) integerValue];
+}
+
+- (void)setPopupVertical: (NYPopupViewVerticalPosition)vertical {
+    objc_setAssociatedObject(self, @selector(vertical), @(vertical), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NYPopupViewHorizontalPosition)popupHorizontal {
+    return [objc_getAssociatedObject(self, @selector(horizontal)) integerValue];
+}
+
+- (void)setPopupHorizontal: (NYPopupViewHorizontalPosition)horizontal {
+    objc_setAssociatedObject(self, @selector(horizontal), @(horizontal), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (CGPoint)popupViewPosition {
+    return [objc_getAssociatedObject(self, @selector(popupViewPosition)) CGPointValue];
+}
+
+- (void)setPopupViewPosition:(CGPoint)popupViewPosition {
+    objc_setAssociatedObject(self, @selector(popupViewPosition), @"popupViewPosition", OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 - (void)presentPopupViewController:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType dismissed:(void(^)(void))dismissed
 {
     self.mj_popupViewController = popupViewController;
@@ -59,6 +88,18 @@ static void * const keypath = (void*)&keypath;
 
 - (void)presentPopupViewController:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType
 {
+    [self presentPopupViewController:popupViewController animationType:animationType dismissed:nil];
+}
+
+- (void)presentPopupViewController: (UIViewController*)popupViewController
+                     animationType: (MJPopupViewAnimation)animationType
+                  verticalPosition: (NYPopupViewVerticalPosition)vertical
+                horizontalPosition: (NYPopupViewHorizontalPosition)horizontal
+                    customPosition: (CGPoint)customPosition
+{
+    self.popupVertical = vertical;
+    self.popupHorizontal = horizontal;
+    self.popupViewPosition = customPosition;
     [self presentPopupViewController:popupViewController animationType:animationType dismissed:nil];
 }
 
@@ -239,10 +280,43 @@ static void * const keypath = (void*)&keypath;
                                         popupSize.height);
             break;
     }
-    CGRect popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
-                                     (sourceSize.height - popupSize.height) / 2,
-                                     popupSize.width,
-                                     popupSize.height);
+    
+    float popupEndX;
+    switch (self.popupHorizontal) {
+        case NYPopupViewHorizontalLeft:
+            popupEndX = 0;
+            break;
+        case NYPopupViewHorizontalRight:
+            popupEndX = sourceSize.width - popupSize.width;
+            break;
+        case NYPopupViewHorizontalCustom:
+            popupEndX = self.popupViewPosition.x;
+            break;
+        case NYPopupViewHorizontalCenter:
+        default:
+            popupEndX = (sourceSize.width - popupSize.width) / 2;
+            break;
+    }
+    
+    float popupEndY;
+    switch (self.popupVertical) {
+        case NYPopupViewVerticalTop:
+            popupEndY = 0;
+            break;
+        case NYPopupViewVerticalBottom:
+            popupEndY = sourceSize.height - popupSize.height;
+            break;
+        case NYPopupViewVerticalCustom:
+            popupEndY = self.popupViewPosition.y;
+            break;
+        case NYPopupViewVerticalCenter:
+        default:
+            popupEndY = (sourceSize.height - popupSize.height) / 2;
+            break;
+    }
+    
+    
+    CGRect popupEndRect = CGRectMake(popupEndX, popupEndY, popupSize.width, popupSize.height);
     
     // Set starting properties
     popupView.frame = popupStartRect;

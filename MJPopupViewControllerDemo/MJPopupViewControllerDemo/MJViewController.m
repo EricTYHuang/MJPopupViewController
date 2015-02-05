@@ -169,7 +169,9 @@
     switch (indexPath.section) {
         case 0: {
             MJDetailViewController *detailViewController = [[MJDetailViewController alloc] initWithNibName:@"MJDetailViewController" bundle:nil];
-            [self presentPopupViewController:detailViewController animationType:indexPath.row];
+//            [detailViewController preparePresentPopupViewWithVertical:MJPopupViewVerticalBottom horizontal:MJPopupViewHorizontalCenter orPoint:CGPointZero];
+            [self presentPopupViewController:detailViewController animationType:indexPath.row verticalPosition:NYPopupViewVerticalBottom horizontalPosition:NYPopupViewHorizontalCenter customPosition:CGPointZero];
+//            [self presentPopupViewController:detailViewController animationType:indexPath.row];
         }
             break;
             
