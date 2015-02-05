@@ -25,14 +25,18 @@ typedef enum {
 typedef enum {
     NYPopupViewVerticalCenter,
     NYPopupViewVerticalTop,
+    NYPopupViewVerticalTopShift,
     NYPopupViewVerticalBottom,
+    NYPopupViewVerticalBottomShift,
     NYPopupViewVerticalCustom,
 } NYPopupViewVerticalPosition;
 
 typedef enum {
     NYPopupViewHorizontalCenter,
     NYPopupViewHorizontalLeft,
+    NYPopupViewHorizontalLeftShift,
     NYPopupViewHorizontalRight,
+    NYPopupViewHorizontalRightShift,
     NYPopupViewHorizontalCustom,
 } NYPopupViewHorizontalPosition;
 

@@ -286,8 +286,14 @@ static void * const keypath = (void*)&keypath;
         case NYPopupViewHorizontalLeft:
             popupEndX = 0;
             break;
+        case NYPopupViewHorizontalLeftShift:
+            popupEndX = self.popupViewPosition.x;
+            break;
         case NYPopupViewHorizontalRight:
             popupEndX = sourceSize.width - popupSize.width;
+            break;
+        case NYPopupViewHorizontalRightShift:
+            popupEndX = sourceSize.width - popupSize.width + self.popupViewPosition.x;
             break;
         case NYPopupViewHorizontalCustom:
             popupEndX = self.popupViewPosition.x;
@@ -303,8 +309,14 @@ static void * const keypath = (void*)&keypath;
         case NYPopupViewVerticalTop:
             popupEndY = 0;
             break;
+        case NYPopupViewVerticalTopShift:
+            popupEndY = self.popupViewPosition.y;
+            break;
         case NYPopupViewVerticalBottom:
             popupEndY = sourceSize.height - popupSize.height;
+            break;
+        case NYPopupViewVerticalBottomShift:
+            popupEndY = sourceSize.height - popupSize.height + self.popupViewPosition.y;
             break;
         case NYPopupViewVerticalCustom:
             popupEndY = self.popupViewPosition.y;
