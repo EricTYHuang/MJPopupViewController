@@ -9,20 +9,18 @@
 #import "UIViewController+MJPopupViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "MJPopupBackgroundView.h"
+#import "NYPopupEffectObject.h"
 #import <objc/runtime.h>
 
 #define kPopupModalAnimationDuration 0.35
 #define kMJPopupViewController @"kMJPopupViewController"
 #define kMJPopupBackgroundView @"kMJPopupBackgroundView"
+#define kNYPopupEffectObject @"kNYPopupEffectObject"
 #define kMJSourceViewTag 23941
 #define kMJPopupViewTag 23942
 #define kMJOverlayViewTag 23945
 
 @interface UIViewController (MJPopupViewControllerPrivate)
-
-@property (nonatomic, assign)NYPopupViewVerticalPosition popupVertical;
-@property (nonatomic, assign)NYPopupViewHorizontalPosition popupHorizontal;
-@property (nonatomic, assign)CGPoint popupViewPosition;
 
 - (UIView*)topView;
 - (void)presentPopupView:(UIView*)popupView;
@@ -56,50 +54,26 @@ static void * const keypath = (void*)&keypath;
     
 }
 
-- (NYPopupViewVerticalPosition)popupVertical {
-    return [objc_getAssociatedObject(self, @selector(vertical)) integerValue];
+- (NYPopupEffectObject *)popupEffectObject {
+    return objc_getAssociatedObject(self, kNYPopupEffectObject);
 }
 
-- (void)setPopupVertical: (NYPopupViewVerticalPosition)vertical {
-    objc_setAssociatedObject(self, @selector(vertical), @(vertical), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (NYPopupViewHorizontalPosition)popupHorizontal {
-    return [objc_getAssociatedObject(self, @selector(horizontal)) integerValue];
-}
-
-- (void)setPopupHorizontal: (NYPopupViewHorizontalPosition)horizontal {
-    objc_setAssociatedObject(self, @selector(horizontal), @(horizontal), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (CGPoint)popupViewPosition {
-    return [objc_getAssociatedObject(self, @selector(popupViewPosition)) CGPointValue];
-}
-
-- (void)setPopupViewPosition:(CGPoint)popupViewPosition {
-    objc_setAssociatedObject(self, @selector(popupViewPosition), @"popupViewPosition", OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setPopupEffectObject:(NYPopupEffectObject *)popupEffectObject {
+    objc_setAssociatedObject(self, kNYPopupEffectObject, popupEffectObject, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
 }
 
 - (void)presentPopupViewController:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType dismissed:(void(^)(void))dismissed
 {
     self.mj_popupViewController = popupViewController;
+    if (!self.mj_popupViewController.popupEffectObject) {
+        self.mj_popupViewController.popupEffectObject = [[NYPopupEffectObject alloc] init];
+    }
     [self presentPopupView:popupViewController.view animationType:animationType dismissed:dismissed];
 }
 
 - (void)presentPopupViewController:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType
 {
-    [self presentPopupViewController:popupViewController animationType:animationType dismissed:nil];
-}
-
-- (void)presentPopupViewController: (UIViewController*)popupViewController
-                     animationType: (MJPopupViewAnimation)animationType
-                  verticalPosition: (NYPopupViewVerticalPosition)vertical
-                horizontalPosition: (NYPopupViewHorizontalPosition)horizontal
-                    customPosition: (CGPoint)customPosition
-{
-    self.popupVertical = vertical;
-    self.popupHorizontal = horizontal;
-    self.popupViewPosition = customPosition;
     [self presentPopupViewController:popupViewController animationType:animationType dismissed:nil];
 }
 
@@ -141,6 +115,9 @@ static void * const keypath = (void*)&keypath;
 - (void)presentPopupView:(UIView*)popupView animationType:(MJPopupViewAnimation)animationType dismissed:(void(^)(void))dismissed
 {
     UIView *sourceView = [self topView];
+    
+    CGRect frame = [self.mj_popupViewController.popupEffectObject adjustBorderShiftWithFrame:sourceView.frame];
+    
     sourceView.tag = kMJSourceViewTag;
     popupView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin |UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
     popupView.tag = kMJPopupViewTag;
@@ -158,13 +135,14 @@ static void * const keypath = (void*)&keypath;
     popupView.layer.rasterizationScale = [[UIScreen mainScreen] scale];
     
     // Add semi overlay
-    UIView *overlayView = [[UIView alloc] initWithFrame:sourceView.bounds];
+    UIView *overlayView = [[UIView alloc] initWithFrame:frame];
     overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     overlayView.tag = kMJOverlayViewTag;
     overlayView.backgroundColor = [UIColor clearColor];
+    overlayView.clipsToBounds = self.mj_popupViewController.popupEffectObject.isClipPopupView;
     
     // BackgroundView
-    self.mj_popupBackgroundView = [[MJPopupBackgroundView alloc] initWithFrame:sourceView.bounds];
+    self.mj_popupBackgroundView = [[MJPopupBackgroundView alloc] initWithFrame:frame];
     self.mj_popupBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.mj_popupBackgroundView.backgroundColor = [UIColor clearColor];
     self.mj_popupBackgroundView.alpha = 0.0f;
@@ -175,10 +153,10 @@ static void * const keypath = (void*)&keypath;
     dismissButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     dismissButton.backgroundColor = [UIColor clearColor];
     dismissButton.frame = sourceView.bounds;
-    [overlayView addSubview:dismissButton];
+    [self.mj_popupBackgroundView addSubview:dismissButton];
     
     popupView.alpha = 0.0f;
-    [overlayView addSubview:popupView];
+    [self.mj_popupBackgroundView addSubview:popupView];
     [sourceView addSubview:overlayView];
     
     [dismissButton addTarget:self action:@selector(dismissPopupViewControllerWithanimation:) forControlEvents:UIControlEventTouchUpInside];
@@ -236,57 +214,6 @@ static void * const keypath = (void*)&keypath;
     }
 }
 
-- (CGPoint)checkPopupViewPositionWithSourceSize: (CGSize)sourceSize andPopupSize: (CGSize)popupSize
-{
-    float popupEndX;
-    switch (self.popupHorizontal) {
-        case NYPopupViewHorizontalLeft:
-            popupEndX = 0;
-            break;
-        case NYPopupViewHorizontalLeftShift:
-            popupEndX = self.popupViewPosition.x;
-            break;
-        case NYPopupViewHorizontalRight:
-            popupEndX = sourceSize.width - popupSize.width;
-            break;
-        case NYPopupViewHorizontalRightShift:
-            popupEndX = sourceSize.width - popupSize.width + self.popupViewPosition.x;
-            break;
-        case NYPopupViewHorizontalCustom:
-            popupEndX = self.popupViewPosition.x;
-            break;
-        case NYPopupViewHorizontalCenter:
-        default:
-            popupEndX = (sourceSize.width - popupSize.width) / 2;
-            break;
-    }
-    
-    float popupEndY;
-    switch (self.popupVertical) {
-        case NYPopupViewVerticalTop:
-            popupEndY = 0;
-            break;
-        case NYPopupViewVerticalTopShift:
-            popupEndY = self.popupViewPosition.y;
-            break;
-        case NYPopupViewVerticalBottom:
-            popupEndY = sourceSize.height - popupSize.height;
-            break;
-        case NYPopupViewVerticalBottomShift:
-            popupEndY = sourceSize.height - popupSize.height + self.popupViewPosition.y;
-            break;
-        case NYPopupViewVerticalCustom:
-            popupEndY = self.popupViewPosition.y;
-            break;
-        case NYPopupViewVerticalCenter:
-        default:
-            popupEndY = (sourceSize.height - popupSize.height) / 2;
-            break;
-    }
-    
-    return CGPointMake(popupEndX, popupEndY);
-}
-
 //////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Animations
@@ -332,13 +259,13 @@ static void * const keypath = (void*)&keypath;
             break;
     }
     
-    CGPoint popupEndPosition = [self checkPopupViewPositionWithSourceSize:sourceSize andPopupSize:popupSize];
+    CGPoint popupEndPosition = [self.mj_popupViewController.popupEffectObject setPopupViewPositionWithSourceSize:sourceSize andPopupSize:popupSize];
     CGRect popupEndRect = CGRectMake(popupEndPosition.x, popupEndPosition.y, popupSize.width, popupSize.height);
     
     // Set starting properties
     popupView.frame = popupStartRect;
     popupView.alpha = 1.0f;
-    [UIView animateWithDuration:kPopupModalAnimationDuration delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+    [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popInAnimationTime delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self.mj_popupViewController viewWillAppear:NO];
         self.mj_popupBackgroundView.alpha = 1.0f;
         popupView.frame = popupEndRect;
@@ -383,7 +310,7 @@ static void * const keypath = (void*)&keypath;
             break;
     }
     
-    [UIView animateWithDuration:kPopupModalAnimationDuration delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
+    [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popOutAnimationTime delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         [self.mj_popupViewController viewWillDisappear:NO];
         popupView.frame = popupEndRect;
         self.mj_popupBackgroundView.alpha = 0.0f;
@@ -410,16 +337,16 @@ static void * const keypath = (void*)&keypath;
     CGSize sourceSize = sourceView.bounds.size;
     CGSize popupSize = popupView.bounds.size;
     
-    CGPoint popupEndPosition = [self checkPopupViewPositionWithSourceSize:sourceSize andPopupSize:popupSize];
+    CGPoint popupEndPosition = [self.mj_popupViewController.popupEffectObject setPopupViewPositionWithSourceSize:sourceSize andPopupSize:popupSize];
     CGRect popupEndRect = CGRectMake(popupEndPosition.x, popupEndPosition.y, popupSize.width, popupSize.height);
     
     // Set starting properties
     popupView.frame = popupEndRect;
     popupView.alpha = 0.0f;
     
-    [UIView animateWithDuration:kPopupModalAnimationDuration animations:^{
+    [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popInAnimationTime animations:^{
         [self.mj_popupViewController viewWillAppear:NO];
-        self.mj_popupBackgroundView.alpha = 0.5f;
+        self.mj_popupBackgroundView.alpha = 1.0f;
         popupView.alpha = 1.0f;
     } completion:^(BOOL finished) {
         [self.mj_popupViewController viewDidAppear:NO];
@@ -428,7 +355,7 @@ static void * const keypath = (void*)&keypath;
 
 - (void)fadeViewOut:(UIView*)popupView sourceView:(UIView*)sourceView overlayView:(UIView*)overlayView
 {
-    [UIView animateWithDuration:kPopupModalAnimationDuration animations:^{
+    [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popOutAnimationTime animations:^{
         [self.mj_popupViewController viewWillDisappear:NO];
         self.mj_popupBackgroundView.alpha = 0.0f;
         popupView.alpha = 0.0f;

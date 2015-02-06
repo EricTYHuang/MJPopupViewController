@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3187EFB81A8377ED00015A0C /* NYPopupEffectObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3187EFB71A8377ED00015A0C /* NYPopupEffectObject.m */; };
 		7A1869691597900300526B20 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A1869681597900300526B20 /* UIKit.framework */; };
 		7A18696B1597900300526B20 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A18696A1597900300526B20 /* Foundation.framework */; };
 		7A18696D1597900300526B20 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A18696C1597900300526B20 /* CoreGraphics.framework */; };
@@ -26,6 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3187EFB61A8377ED00015A0C /* NYPopupEffectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYPopupEffectObject.h; sourceTree = "<group>"; };
+		3187EFB71A8377ED00015A0C /* NYPopupEffectObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYPopupEffectObject.m; sourceTree = "<group>"; };
 		7A1869641597900300526B20 /* MJPopupViewControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MJPopupViewControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A1869681597900300526B20 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		7A18696A1597900300526B20 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -129,6 +132,8 @@
 				7A469E101597903B00BA5F2E /* MJPopupBackgroundView.m */,
 				7A469E111597903B00BA5F2E /* UIViewController+MJPopupViewController.h */,
 				7A469E121597903B00BA5F2E /* UIViewController+MJPopupViewController.m */,
+				3187EFB61A8377ED00015A0C /* NYPopupEffectObject.h */,
+				3187EFB71A8377ED00015A0C /* NYPopupEffectObject.m */,
 			);
 			name = Source;
 			path = ../../Source;
@@ -237,6 +242,7 @@
 				7A469E141597903B00BA5F2E /* UIViewController+MJPopupViewController.m in Sources */,
 				7A469E19159790A000BA5F2E /* MJDetailViewController.m in Sources */,
 				7A469E21159793BE00BA5F2E /* MJSecondDetailViewController.m in Sources */,
+				3187EFB81A8377ED00015A0C /* NYPopupEffectObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

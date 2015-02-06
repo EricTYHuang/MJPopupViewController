@@ -11,6 +11,8 @@
 #import "MJDetailViewController.h"
 #import "MJSecondDetailViewController.h"
 
+#import "NYPopupEffectObject.h"
+
 @interface MJViewController () <MJSecondPopupDelegate>{
     NSArray *actions;
     NSArray *animations;
@@ -169,9 +171,12 @@
     switch (indexPath.section) {
         case 0: {
             MJDetailViewController *detailViewController = [[MJDetailViewController alloc] initWithNibName:@"MJDetailViewController" bundle:nil];
-//            [detailViewController preparePresentPopupViewWithVertical:MJPopupViewVerticalBottom horizontal:MJPopupViewHorizontalCenter orPoint:CGPointZero];
-            [self presentPopupViewController:detailViewController animationType:indexPath.row verticalPosition:NYPopupViewVerticalBottom horizontalPosition:NYPopupViewHorizontalCenter customPosition:CGPointZero];
-//            [self presentPopupViewController:detailViewController animationType:indexPath.row];
+            
+            detailViewController.popupEffectObject = [[NYPopupEffectObject alloc] init];
+            detailViewController.popupEffectObject.borderShift = UIEdgeInsetsMake(0, 0, 44, 0);
+            detailViewController.popupEffectObject.popupVertical = NYPopupViewVerticalBottomShift;
+            detailViewController.popupEffectObject.popupViewShift = CGPointMake(0, -44);
+            [self presentPopupViewController:detailViewController animationType:indexPath.row];
         }
             break;
             

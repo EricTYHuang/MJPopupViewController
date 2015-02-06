@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class MJPopupBackgroundView;
+@class NYPopupEffectObject;
 
 typedef enum {
     MJPopupViewAnimationFade = 0,
@@ -22,37 +23,28 @@ typedef enum {
     MJPopupViewAnimationSlideRightRight,
 } MJPopupViewAnimation;
 
-typedef enum {
-    NYPopupViewVerticalCenter,
-    NYPopupViewVerticalTop,
-    NYPopupViewVerticalTopShift,
-    NYPopupViewVerticalBottom,
-    NYPopupViewVerticalBottomShift,
-    NYPopupViewVerticalCustom,
-} NYPopupViewVerticalPosition;
-
-typedef enum {
-    NYPopupViewHorizontalCenter,
-    NYPopupViewHorizontalLeft,
-    NYPopupViewHorizontalLeftShift,
-    NYPopupViewHorizontalRight,
-    NYPopupViewHorizontalRightShift,
-    NYPopupViewHorizontalCustom,
-} NYPopupViewHorizontalPosition;
-
 @interface UIViewController (MJPopupViewController)
 
 @property (nonatomic, retain) UIViewController *mj_popupViewController;
 @property (nonatomic, retain) MJPopupBackgroundView *mj_popupBackgroundView;
+@property (nonatomic, retain) NYPopupEffectObject *popupEffectObject;
 
 - (void)presentPopupViewController: (UIViewController*)popupViewController animationType: (MJPopupViewAnimation)animationType;
 - (void)presentPopupViewController: (UIViewController*)popupViewController animationType: (MJPopupViewAnimation)animationType dismissed:(void(^)(void))dismissed;
 
 - (void)presentPopupViewController: (UIViewController*)popupViewController
                      animationType: (MJPopupViewAnimation)animationType
-                  verticalPosition: (NYPopupViewVerticalPosition)vertical
-                horizontalPosition: (NYPopupViewHorizontalPosition)horizontal
-                    customPosition: (CGPoint)customPosition;
+                        withEffect: (NYPopupEffectObject*) effectObj;
+- (void)presentPopupViewController: (UIViewController*)popupViewController
+                     animationType: (MJPopupViewAnimation)animationType
+                        withEffect: (NYPopupEffectObject*) effectObj
+                         dismissed:( void(^)(void))dismissed;
+
+//- (void)presentPopupViewController: (UIViewController*)popupViewController
+//                     animationType: (MJPopupViewAnimation)animationType
+//                  verticalPosition: (NYPopupViewVerticalPosition)vertical
+//                horizontalPosition: (NYPopupViewHorizontalPosition)horizontal
+//                    customPosition: (CGPoint)customPosition;
 
 - (void)dismissPopupViewControllerWithanimationType:(MJPopupViewAnimation)animationType;
 
