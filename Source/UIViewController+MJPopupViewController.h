@@ -26,7 +26,8 @@ typedef enum {
 @interface UIViewController (MJPopupViewController)
 
 @property (nonatomic, retain) UIViewController *mj_popupViewController;
-@property (nonatomic, retain) MJPopupBackgroundView *mj_popupBackgroundView;
+@property (nonatomic, retain) UIView *customPopupBackgroundView;
+//@property (nonatomic, retain) MJPopupBackgroundView *mj_popupBackgroundView;
 @property (nonatomic, retain) NYPopupEffectObject *popupEffectObject;
 
 - (void)presentPopupViewController: (UIViewController*)popupViewController animationType: (MJPopupViewAnimation)animationType;

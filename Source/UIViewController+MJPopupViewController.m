@@ -45,12 +45,12 @@ static void * const keypath = (void*)&keypath;
     
 }
 
-- (MJPopupBackgroundView*)mj_popupBackgroundView {
+- (UIView*)customPopupBackgroundView {
     return objc_getAssociatedObject(self, kMJPopupBackgroundView);
 }
 
-- (void)setMj_popupBackgroundView:(MJPopupBackgroundView *)mj_popupBackgroundView {
-    objc_setAssociatedObject(self, kMJPopupBackgroundView, mj_popupBackgroundView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setCustomPopupBackgroundView:(UIView *)customPopupBackgroundView {
+    objc_setAssociatedObject(self, kMJPopupBackgroundView, customPopupBackgroundView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
 }
 
@@ -142,21 +142,23 @@ static void * const keypath = (void*)&keypath;
     overlayView.clipsToBounds = self.mj_popupViewController.popupEffectObject.isClipPopupView;
     
     // BackgroundView
-    self.mj_popupBackgroundView = [[MJPopupBackgroundView alloc] initWithFrame:frame];
-    self.mj_popupBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.mj_popupBackgroundView.backgroundColor = [UIColor clearColor];
-    self.mj_popupBackgroundView.alpha = 0.0f;
-    [overlayView addSubview:self.mj_popupBackgroundView];
+    if (!self.mj_popupViewController.customPopupBackgroundView) {
+        self.mj_popupViewController.customPopupBackgroundView = [[MJPopupBackgroundView alloc] initWithFrame:frame];
+        self.mj_popupViewController.customPopupBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.mj_popupViewController.customPopupBackgroundView.backgroundColor = [UIColor clearColor];
+        self.mj_popupViewController.customPopupBackgroundView.alpha = 0.0f;
+    }
+    [overlayView addSubview:self.mj_popupViewController.customPopupBackgroundView];
     
     // Make the Background Clickable
     UIButton * dismissButton = [UIButton buttonWithType:UIButtonTypeCustom];
     dismissButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     dismissButton.backgroundColor = [UIColor clearColor];
     dismissButton.frame = sourceView.bounds;
-    [self.mj_popupBackgroundView addSubview:dismissButton];
+    [self.mj_popupViewController.customPopupBackgroundView addSubview:dismissButton];
     
     popupView.alpha = 0.0f;
-    [self.mj_popupBackgroundView addSubview:popupView];
+    [self.mj_popupViewController.customPopupBackgroundView addSubview:popupView];
     [sourceView addSubview:overlayView];
     
     [dismissButton addTarget:self action:@selector(dismissPopupViewControllerWithanimation:) forControlEvents:UIControlEventTouchUpInside];
@@ -267,7 +269,7 @@ static void * const keypath = (void*)&keypath;
     popupView.alpha = 1.0f;
     [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popInAnimationTime delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self.mj_popupViewController viewWillAppear:NO];
-        self.mj_popupBackgroundView.alpha = 1.0f;
+        self.mj_popupViewController.customPopupBackgroundView.alpha = 1.0f;
         popupView.frame = popupEndRect;
     } completion:^(BOOL finished) {
         [self.mj_popupViewController viewDidAppear:NO];
@@ -313,7 +315,7 @@ static void * const keypath = (void*)&keypath;
     [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popOutAnimationTime delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         [self.mj_popupViewController viewWillDisappear:NO];
         popupView.frame = popupEndRect;
-        self.mj_popupBackgroundView.alpha = 0.0f;
+        self.mj_popupViewController.customPopupBackgroundView.alpha = 0.0f;
     } completion:^(BOOL finished) {
         [popupView removeFromSuperview];
         [overlayView removeFromSuperview];
@@ -346,7 +348,7 @@ static void * const keypath = (void*)&keypath;
     
     [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popInAnimationTime animations:^{
         [self.mj_popupViewController viewWillAppear:NO];
-        self.mj_popupBackgroundView.alpha = 1.0f;
+        self.mj_popupViewController.customPopupBackgroundView.alpha = 1.0f;
         popupView.alpha = 1.0f;
     } completion:^(BOOL finished) {
         [self.mj_popupViewController viewDidAppear:NO];
@@ -357,7 +359,7 @@ static void * const keypath = (void*)&keypath;
 {
     [UIView animateWithDuration:self.mj_popupViewController.popupEffectObject.popOutAnimationTime animations:^{
         [self.mj_popupViewController viewWillDisappear:NO];
-        self.mj_popupBackgroundView.alpha = 0.0f;
+        self.mj_popupViewController.customPopupBackgroundView.alpha = 0.0f;
         popupView.alpha = 0.0f;
     } completion:^(BOOL finished) {
         [popupView removeFromSuperview];
