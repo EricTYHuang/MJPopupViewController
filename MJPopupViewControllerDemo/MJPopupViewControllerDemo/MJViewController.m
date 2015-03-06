@@ -13,7 +13,7 @@
 
 #import "NYPopupEffectObject.h"
 
-@interface MJViewController () <MJSecondPopupDelegate>{
+@interface MJViewController () <NYPopupAndDismissProtocol>{
     NSArray *actions;
     NSArray *animations;
 }
@@ -61,8 +61,7 @@
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) || (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
-- (void)cancelButtonClicked:(MJSecondDetailViewController *)aSecondDetailViewController
-{
+- (void)dismissViewController {
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
 }
 
