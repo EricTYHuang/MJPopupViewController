@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class MJPopupBackgroundView;
 @class NYPopupEffectObject;
 
 typedef enum {
@@ -23,11 +22,17 @@ typedef enum {
     MJPopupViewAnimationSlideRightRight,
 } MJPopupViewAnimation;
 
+@protocol NYPopupAndDismissProtocol <NSObject>
+
+- (void)popupViewController;
+- (void)dismissViewController;
+
+@end
+
 @interface UIViewController (MJPopupViewController)
 
 @property (nonatomic, retain) UIViewController *mj_popupViewController;
 @property (nonatomic, retain) UIView *customPopupBackgroundView;
-//@property (nonatomic, retain) MJPopupBackgroundView *mj_popupBackgroundView;
 @property (nonatomic, retain) NYPopupEffectObject *popupEffectObject;
 
 - (void)presentPopupViewController: (UIViewController*)popupViewController animationType: (MJPopupViewAnimation)animationType;
