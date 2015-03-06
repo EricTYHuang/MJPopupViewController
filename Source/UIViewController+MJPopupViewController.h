@@ -25,8 +25,8 @@ typedef enum {
 @protocol NYPopupAndDismissProtocol <NSObject>
 
 @optional
-- (void)popupViewController;
-- (void)dismissViewController;
+- (void)popupViewController: (id)data;
+- (void)dismissViewController: (id)data;
 
 @end
 

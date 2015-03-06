@@ -61,7 +61,7 @@
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) || (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
-- (void)dismissViewController {
+- (void)dismissViewController:(id)data {
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
 }
 

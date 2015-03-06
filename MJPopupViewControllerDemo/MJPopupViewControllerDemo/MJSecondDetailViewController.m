@@ -19,8 +19,8 @@
 
 - (IBAction)closePopup:(id)sender
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dismissViewController)]) {
-        [self.delegate dismissViewController];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dismissViewController:)]) {
+        [self.delegate dismissViewController: nil];
     }
 }
 

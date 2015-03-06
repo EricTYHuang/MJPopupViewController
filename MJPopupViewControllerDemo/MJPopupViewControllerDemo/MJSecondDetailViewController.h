@@ -13,6 +13,4 @@
 
 @property (assign, nonatomic) id <NYPopupAndDismissProtocol> delegate;
 
-- (void)cancelButtonClicked:(MJSecondDetailViewController*)secondDetailViewController;
-
 @end
