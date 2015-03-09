@@ -27,7 +27,6 @@ typedef enum {
 @optional
 - (void)popupViewController: (id)data;
 - (void)dismissViewController: (id)data;
-
 @end
 
 @interface UIViewController (MJPopupViewController)
