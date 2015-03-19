@@ -126,7 +126,7 @@ static void * const keypath = (void*)&keypath;
     if ([sourceView.subviews containsObject:popupView]) return;
     
     // customize popupView
-    popupView.layer.masksToBounds = NO;
+    popupView.layer.masksToBounds = YES;
     popupView.layer.shouldRasterize = YES;
     popupView.layer.rasterizationScale = [[UIScreen mainScreen] scale];
     
